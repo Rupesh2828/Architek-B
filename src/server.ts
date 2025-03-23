@@ -4,7 +4,6 @@ import prisma from "./config/database";
 const PORT = process.env.PORT ?? 4000;
 
 
-
 async function server() {
     try {
         await prisma.$connect();
