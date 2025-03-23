@@ -8,6 +8,7 @@ async function server() {
     try {
         await prisma.$connect();
         console.log("Connected to Postgres!");
+        
 
         app.listen(PORT, () => {
             console.log(`Server is running on PORT: ${PORT}`);
