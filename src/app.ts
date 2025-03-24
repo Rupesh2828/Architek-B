@@ -11,6 +11,7 @@ app.get("/user/:id", (req, res) => {
 
   const {id} = req.params;
 
+
   const user = {
     id,
     name: faker.person.fullName(),
@@ -20,5 +21,9 @@ app.get("/user/:id", (req, res) => {
   res.json(user)
   
 });
+
+import userRouter from "./routes/user.route"
+
+app.use("/api/v1/users", userRouter)
 
 export default app;
