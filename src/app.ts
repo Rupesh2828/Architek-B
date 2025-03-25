@@ -19,7 +19,9 @@ app.use(express.json({ limit: "50mb" }));
 app.use(sessionMiddleware)
 
 import userRouter from "./routes/user.route"
+import loadBalancerRouter from "./routes/loadbalancer.route"
 
 app.use("/api/v1/users", userRouter)
+app.use("/api/v2/loadbalancer", loadBalancerRouter);
 
 export default app;
