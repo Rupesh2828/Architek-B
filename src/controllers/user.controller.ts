@@ -41,11 +41,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     try {
         const { email, password, username, role } = req.body
 
-        if (!email || !password || !username || !role) {
-            res.status(400).json({ error: "Username, Email, and Password are required" });
-            return;
-        }
-
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
