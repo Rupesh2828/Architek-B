@@ -12,30 +12,30 @@ declare module 'express-session' {
 
 //this is authenticate user handler only stays in controller.
 export const getAuthenticatedUser = async (req: Request, res: Response): Promise<void> => {
-   try {
-     if (!req.session.userId) {
-       res.status(401).json({ error: "Unauthorized" });
-       return;
-     }
-   
-     const user = await prisma.user.findUnique({
-       where: { id: req.session.userId },
-       select: { id: true, email: true, role: true },
-     });
-   
-     if (!user) {
-       res.status(401).json({ error: "Session expired, please log in again" });
-       return;
-     }
-     res.status(200).json({ user });
-   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-    
-   }
-  
-  };
-  
+    try {
+        if (!req.session.userId) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: req.session.userId },
+            select: { id: true, email: true, role: true },
+        });
+
+        if (!user) {
+            res.status(401).json({ error: "Session expired, please log in again" });
+            return;
+        }
+        res.status(200).json({ user });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+
+    }
+
+};
+
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -47,6 +47,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
         if (existingUser) {
             res.status(409).json({ error: 'User already exists' });
+            return;
 
         }
 
@@ -121,14 +122,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 };
 
 
-export const logoutUser = async(req:Request, res:Response):Promise<void> => {
+export const logoutUser = async (req: Request, res: Response): Promise<void> => {
     req.session.destroy((err) => {
         if (err) {
-          res.status(500).json({ error: "Logout failed" });
-          return;
+            res.status(500).json({ error: "Logout failed" });
+            return;
         }
-        res.clearCookie("connect.sid"); 
+        res.clearCookie("connect.sid");
         res.status(200).json({ message: "Logout successful" });
-      });
+    });
 }
 
