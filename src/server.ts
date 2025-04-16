@@ -39,14 +39,14 @@ async function main() {
     });
 
     // Start additional servers
-    const additionalServers = servers.map(server => 
-      startServer({ 
-        port: parseInt(new URL(server.url).port), 
-        app: express() 
-      })
-    );
+    // const additionalServers = servers.map(server => 
+    //   startServer({ 
+    //     port: parseInt(new URL(server.url).port), 
+    //     app: express() 
+    //   })
+    // );
 
-    await Promise.all(additionalServers);
+    // await Promise.all(additionalServers);
 
     // Start proxy
     startProxy();
