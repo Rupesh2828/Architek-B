@@ -41,19 +41,19 @@ export const getAuthenticatedUser = async (req: Request, res: Response): Promise
 export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password, username, role } = req.body
-
+        
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
-
+        
         if (existingUser) {
             res.status(409).json({ error: 'User already exists' });
             return;
-
+            
         }
-
+        
         const hashedPassword = await bcrypt.hash(password, 10)
-
+        
         const newUser = await prisma.user.create({
 
             data: {
@@ -73,7 +73,12 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         })
 
         const context = getContext();
-        console.log(`[${context?.requestId}] User created with ID: ${newUser.id}`);
+        if (context) {
+            console.log(`[${context.requestId}] User created with ID: ${newUser.id}`);
+            console.log(`Request ID: ${context.requestId} | User ID: ${context.userId}`);
+        } else {
+            console.warn('No context found for logging user creation');
+        }
 
         // const accessToken = generateAccessToken({ id: newUser.id, role: newUser.role })
         // const refreshToken = generateRefreshToken({ id: newUser.id });
@@ -83,7 +88,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
             req.session.role = newUser.role;
         } else {
             console.warn('Session object is undefined');
-            // Continue without setting session properties
         }
 
         res.status(201).json({
