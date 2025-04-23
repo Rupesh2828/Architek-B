@@ -11,10 +11,9 @@ declare module 'express-session' {
     }
 }
 
-//this is authenticate user handler only stays in controller.
 export const getAuthenticatedUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        if (!req.session.userId) {
+        if (!req.session?.userId) {
             res.status(401).json({ error: "Unauthorized" });
             return;
         }
@@ -28,14 +27,18 @@ export const getAuthenticatedUser = async (req: Request, res: Response): Promise
             res.status(401).json({ error: "Session expired, please log in again" });
             return;
         }
+
+        const context = getContext();
+        console.log(`[${context?.requestId}] Authenticated user: ${user.id}`);
+
         res.status(200).json({ user });
+
     } catch (error) {
-        console.log(error);
+        console.error('Error fetching authenticated user:', error);
         res.status(500).json({ error: 'Internal Server Error' });
-
     }
-
 };
+
 
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
@@ -83,7 +86,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         // const accessToken = generateAccessToken({ id: newUser.id, role: newUser.role })
         // const refreshToken = generateRefreshToken({ id: newUser.id });
 
-        if (req.session) {  // Check if session exists
+        if (req.session) {  
             req.session.userId = newUser.id;
             req.session.role = newUser.role;
         } else {

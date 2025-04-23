@@ -7,6 +7,7 @@ import { contextMiddleware } from "./middlewares/context";
 
 const app = express();
 
+app.use(sessionMiddleware)
 app.use(contextMiddleware)
 
 app.use(cors({
@@ -19,7 +20,6 @@ app.use(helmet())
 app.use(compression())
 
 app.use(express.json({ limit: "50mb" }));
-app.use(sessionMiddleware)
 
 import userRouter from "./routes/user.route"
 import orgRouter from "./routes/organization.route"
