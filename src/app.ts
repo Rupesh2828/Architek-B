@@ -3,8 +3,11 @@ import cors from "cors";
 import { sessionMiddleware } from "./config/session";
 import helmet from "helmet";
 import compression from "compression"
+import { contextMiddleware } from "./middlewares/context";
 
 const app = express();
+
+app.use(contextMiddleware)
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,

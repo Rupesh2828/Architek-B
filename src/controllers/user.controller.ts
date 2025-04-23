@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../config/database";
 import bcrypt from "bcryptjs"
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import { getContext } from "../utils/request-context";
 
 declare module 'express-session' {
     interface Session {
@@ -70,6 +71,9 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
             },
 
         })
+
+        const context = getContext();
+        console.log(`[${context?.requestId}] User created with ID: ${newUser.id}`);
 
         // const accessToken = generateAccessToken({ id: newUser.id, role: newUser.role })
         // const refreshToken = generateRefreshToken({ id: newUser.id });
