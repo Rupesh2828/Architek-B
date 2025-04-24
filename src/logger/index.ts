@@ -1,14 +1,15 @@
-import * as winston from 'winston';
+import pino from 'pino';
 
+const logger = pino({
+  level: 'info',
+  transport: {
+    target: 'pino-pretty', 
+    options: {
+      colorize: true,
+      translateTime: true,
+      ignore: 'pid,hostname'
+    }
+  }
+});
 
-export const logger = winston.createLogger({
-    level: "info",
-    format:winston.format.simple(),
-    transports: [new winston.transports.Console()]
-
-})
-console.log("Hello from the console!");
-
-
-logger.info("Hello world ---")
-logger.log("info", "Hello world this is winston")
+export default logger;

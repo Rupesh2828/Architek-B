@@ -3,6 +3,7 @@ import prisma from "../config/database";
 import bcrypt from "bcryptjs"
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 import { getContext } from "../utils/request-context";
+import logger from "../logger";
 
 declare module 'express-session' {
     interface Session {
@@ -10,6 +11,12 @@ declare module 'express-session' {
         role?: string;
     }
 }
+
+// interface UserType{
+//     email: string,
+//     password: string,
+//     username: string
+// }
 
 export const getAuthenticatedUser = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -44,7 +51,8 @@ export const getAuthenticatedUser = async (req: Request, res: Response): Promise
 export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password, username, role } = req.body
-        
+
+
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
@@ -77,8 +85,8 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
         const context = getContext();
         if (context) {
-            console.log(`[${context.requestId}] User created with ID: ${newUser.id}`);
-            console.log(`Request ID: ${context.requestId} | User ID: ${context.userId}`);
+            logger.info(`[${context.requestId}] User created with ID: ${newUser.id}`);
+            logger.info(`Request ID: ${context.requestId} | User ID: ${context.userId}`);
         } else {
             console.warn('No context found for logging user creation');
         }
@@ -108,6 +116,8 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body;
+        logger.info({ email }, "User login attempt");
+
 
         if (!email || !password) {
             res.status(400).json({ error: "Email and password are required" });
