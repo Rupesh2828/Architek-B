@@ -6,12 +6,11 @@ import { loginSchema, userSchema } from "../zod-schema/userSchema";
 const router = Router();
 
 /**
- * @openapi
+ * @swagger
  * /api/v1/users/create:
  *   post:
  *     summary: Create a new user
- *     tags:
- *       - Users
+ *     description: Creates a user with the provided data.
  *     requestBody:
  *       required: true
  *       content:
@@ -20,9 +19,10 @@ const router = Router();
  *             $ref: '#/components/schemas/User'
  *     responses:
  *       201:
- *         description: User created successfully
+ *         description: User created successfully..
  */
 router.post('/create', validateRequest(userSchema), createUser);
+
 
 /**
  * @openapi
