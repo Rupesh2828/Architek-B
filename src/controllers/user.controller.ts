@@ -56,15 +56,15 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
-        
+
         if (existingUser) {
             res.status(409).json({ error: 'User already exists' });
             return;
-            
+
         }
-        
+
         const hashedPassword = await bcrypt.hash(password, 10)
-        
+
         const newUser = await prisma.user.create({
 
             data: {
@@ -94,7 +94,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         // const accessToken = generateAccessToken({ id: newUser.id, role: newUser.role })
         // const refreshToken = generateRefreshToken({ id: newUser.id });
 
-        if (req.session) {  
+        if (req.session) {
             req.session.userId = newUser.id;
             req.session.role = newUser.role;
         } else {
@@ -157,44 +157,44 @@ export const logoutUser = async (req: Request, res: Response): Promise<void> => 
 
 export const deleteUserWithData = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id } = req.params;
-  
-      if (!id) {
-        res.status(400).json({ message: "ID is required" });
-        return;
-      }
-  
-      await prisma.$transaction([
-        prisma.comment.deleteMany({
-          where: { authorId: id }
-        }),
+        const { id } = req.params;
 
-        prisma.project.deleteMany({
-          where: { ownerId: id }
-        }),
-  
-        prisma.task.updateMany({
-          where: { assigneeId: id },
-          data: { assigneeId: null }
-        }),
-  
-        prisma.profile.deleteMany({
-          where: { userId: id }
-        }),
-  
-        prisma.organizationMember.deleteMany({
-          where: { userId: id }
-        }),
-  
-        prisma.user.delete({
-          where: { id }
-        })
-      ]);
-  
-      res.status(200).json({ message: "User and related data deleted successfully" });
+        if (!id) {
+            res.status(400).json({ message: "ID is required" });
+            return;
+        }
+
+        await prisma.$transaction([
+            prisma.comment.deleteMany({
+                where: { authorId: id }
+            }),
+
+            prisma.project.deleteMany({
+                where: { ownerId: id }
+            }),
+
+            prisma.task.updateMany({
+                where: { assigneeId: id },
+                data: { assigneeId: null }
+            }),
+
+            prisma.profile.deleteMany({
+                where: { userId: id }
+            }),
+
+            prisma.organizationMember.deleteMany({
+                where: { userId: id }
+            }),
+
+            prisma.user.delete({
+                where: { id }
+            })
+        ]);
+
+        res.status(200).json({ message: "User and related data deleted successfully" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  };
-  
+};
+

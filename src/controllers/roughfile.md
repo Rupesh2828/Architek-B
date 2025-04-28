@@ -1064,6 +1064,7 @@ export async function getTaskDetails(taskId: string, currentUserId: string) {
   
   if (!task) {
     throw new NotFoundError('Task not found');
+    
   }
   
   await checkProjectAccess(task.projectId, currentUserId);
