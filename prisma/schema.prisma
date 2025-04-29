@@ -7,79 +7,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
-  id             String         @id @default(uuid())
-  email          String         @unique
-  password       String
-  username       String
-  role           Role           @default(USER)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  username  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  profile        Profile?
-  organizations  OrganizationMember[]
-  projects       Project[]      @relation("UserProjects")
-  comments       Comment[]
-  tasksAssigned  Task[]         @relation("AssignedTasks")
-  subscriptions  Subscription[]
+  profile       Profile?
+  organizations OrganizationMember[]
+  projects      Project[]            @relation("UserProjects")
+  comments      Comment[]
+  tasksAssigned Task[]               @relation("AssignedTasks")
+  subscriptions Subscription[]
+  file          File[]
+}
+
+model File {
+  id           String   @id @default(uuid())
+  key          String   @unique
+  url          String
+  fileType     String // <-- stores MIME type like 'image/png', 'application/pdf'
+  originalName String?
+   size         Int?
+  createdAt    DateTime @default(now())
+  userId       String? // optional, if files belong to a user
+  user         User?    @relation(fields: [userId], references: [id])
 }
 
 model Profile {
-  id        String   @id @default(uuid())
-  bio       String?
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  id     String  @id @default(uuid())
+  bio    String?
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
 }
 
 model Organization {
-  id          String                @id @default(uuid())
-  name        String
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  members     OrganizationMember[]
-  projects    Project[]
+  members  OrganizationMember[]
+  projects Project[]
 }
 
 model OrganizationMember {
-  id              String         @id @default(uuid())
-  userId          String
-  organizationId  String
-  role            OrgRole        @default(MEMBER)
-  
-  user            User           @relation(fields: [userId], references: [id])
-  organization    Organization   @relation(fields: [organizationId], references: [id])
+  id             String  @id @default(uuid())
+  userId         String
+  organizationId String
+  role           OrgRole @default(MEMBER)
+
+  user         User         @relation(fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
 
   @@unique([userId, organizationId])
 }
 
 model Project {
-  id             String      @id @default(uuid())
+  id             String   @id @default(uuid())
   title          String
   description    String?
   ownerId        String
   organizationId String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  owner          User        @relation("UserProjects", fields: [ownerId], references: [id])
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  tasks          Task[]
+  owner        User          @relation("UserProjects", fields: [ownerId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  tasks        Task[]
 }
 
 model Task {
-  id          String      @id @default(uuid())
-  title       String
-  status      TaskStatus  @default(PENDING)
-  assigneeId  String?
-  projectId   String
-  createdAt   DateTime    @default(now())
+  id         String     @id @default(uuid())
+  title      String
+  status     TaskStatus @default(PENDING)
+  assigneeId String?
+  projectId  String
+  createdAt  DateTime   @default(now())
 
-  assignee    User?       @relation("AssignedTasks", fields: [assigneeId], references: [id])
-  project     Project     @relation(fields: [projectId], references: [id])
-  comments    Comment[]
+  assignee User?     @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  project  Project   @relation(fields: [projectId], references: [id])
+  comments Comment[]
 }
 
 model Comment {
@@ -89,18 +100,18 @@ model Comment {
   taskId    String
   createdAt DateTime @default(now())
 
-  author    User     @relation(fields: [authorId], references: [id])
-  task      Task     @relation(fields: [taskId], references: [id])
+  author User @relation(fields: [authorId], references: [id])
+  task   Task @relation(fields: [taskId], references: [id])
 }
 
 model Subscription {
-  id         String   @id @default(uuid())
-  userId     String
-  plan       Plan     @default(FREE)
-  startedAt  DateTime @default(now())
-  endsAt     DateTime
+  id        String   @id @default(uuid())
+  userId    String
+  plan      Plan     @default(FREE)
+  startedAt DateTime @default(now())
+  endsAt    DateTime
 
-  user       User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 enum Role {

@@ -11,6 +11,7 @@ import { swaggerSpec } from "./swagger/swagger";
 import userRouter from "./routes/user.route";
 import orgRouter from "./routes/organization.route";
 import loadBalancerRouter from "./routes/loadbalancer.route";
+import uploadRouter from "./routes/upload.route"
 
 const app = express();
 
@@ -37,5 +38,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/org", orgRouter);
 app.use("/api/v2/loadbalancer", loadBalancerRouter);
+app.use("/api/v3/s3uploader", uploadRouter);
 
 export default app;
