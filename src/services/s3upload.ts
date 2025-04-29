@@ -5,6 +5,7 @@ import prisma from "../config/database";
 import { readFile, unlink } from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { IncomingMessage } from "http";
+import logger from "../logger";
 
 interface User {
   id: string;
@@ -33,14 +34,16 @@ export async function uploadFiles(
   req: IncomingMessage,
   user: User
 ): Promise<UploadTypes[]> {
+
   const form = formidable({
-    maxFileSize: 10 * 1024 * 1024, // 10 MB
+    maxFileSize: 10 * 1024 * 1024, //10 MB
     multiples: true,
     keepExtensions: true,
   });
 
   return new Promise((resolve, reject) => {
     form.parse(req, async (err, fields, files) => {
+
       if (err) return reject(new Error(`File parse error: ${err.message}`));
       if (!files.file) return reject(new Error('No files were uploaded'));
 
@@ -58,8 +61,10 @@ export async function uploadFiles(
           const buffer = await readFile(file.filepath);
           const sanitizedFilename = (file.originalFilename || 'unnamed').replace(/[^a-zA-Z0-9._-]/g, '_');
           const key = `uploads/${user.id}/${uuid()}-${sanitizedFilename}`;
+          logger.info({ key }, "S3 KEY")
 
           const bucket = process.env.AWS_S3_BUCKET_NAME;
+          logger.info({ bucket }, "Bucket")
           const region = process.env.AWS_REGION;
           if (!bucket || !region) throw new Error('Missing AWS S3 configuration');
 
@@ -88,6 +93,7 @@ export async function uploadFiles(
           });
 
           results.push(record as UploadTypes);
+
         } catch (error) {
           console.error('Error processing file:', error);
         } finally {

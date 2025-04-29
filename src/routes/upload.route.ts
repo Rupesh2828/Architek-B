@@ -1,12 +1,11 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { getAuthenticatedUser } from "../controllers/user.controller";
+import { Router, Request, Response   } from "express";
 import { uploadFiles } from "../services/s3upload";
 import prisma from "../config/database";
 
 const router = Router();
 
 router.post(
-  '/upload', // Middleware to set req.session.userId
+  '/upload',
   async (req: Request, res: Response): Promise<void> => {
     try {
       if (!req.session.userId) {
