@@ -35,6 +35,35 @@ export const createOrganizationWithOwner = async (req: Request, res: Response): 
   }
 };
 
+export const fetchOrganizationById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({ message: "Organization ID is required" });
+      return;
+    }
+
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!organization) {
+      res.status(404).json({ message: "Organization not found" });
+      return;
+    }
+
+    res.status(200).json({ organization });
+
+  } catch (error) {
+    console.error("Error fetching organization:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
 export const deleteOrganizationCascade = async (req: Request, res: Response): Promise<void> => {
 
   try {
