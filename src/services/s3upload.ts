@@ -5,7 +5,7 @@ import prisma from "../config/database";
 import { readFile, unlink } from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { IncomingMessage } from "http";
-import logger from "../logger";
+import logger from "../utils";
 
 interface User {
   id: string;

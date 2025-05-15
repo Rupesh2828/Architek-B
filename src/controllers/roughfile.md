@@ -283,7 +283,7 @@ export async function createProject(data: ProjectCreateInput, currentUserId: str
           userId: currentUserId,
         },
       },
-    });
+    }); 
 
     if (!teamMembership) {
       throw new ForbiddenError('You are not a member of this team');

@@ -3,7 +3,7 @@ import prisma from "../config/database";
 import bcrypt from "bcryptjs"
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 import { getContext } from "../utils/request-context";
-import logger from "../logger";
+import logger from "../utils";
 
 declare module 'express-session' {
     interface Session {
@@ -12,11 +12,6 @@ declare module 'express-session' {
     }
 }
 
-// interface UserType{
-//     email: string,
-//     password: string,
-//     username: string
-// }
 
 export const getAuthenticatedUser = async (req: Request, res: Response): Promise<void> => {
     try {
